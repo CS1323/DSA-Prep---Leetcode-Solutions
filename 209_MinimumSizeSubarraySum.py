@@ -4,6 +4,7 @@ def minSubArrayLen(target, nums) -> int:
     subarray_sum = 0
     min_window_length = nums_length+1
 
+    # sliding window for subarray
     for right in range(nums_length):
         subarray_sum += nums[right]
 
@@ -18,6 +19,8 @@ def minSubArrayLen(target, nums) -> int:
 
     return min_window_length
 
+    # Time:  O(n)
+    # Space: O(1)
 
 target = 7
 nums = [2,3,1,2,4,3]
