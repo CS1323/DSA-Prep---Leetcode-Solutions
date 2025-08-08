@@ -6,10 +6,7 @@ def lengthOfLongestSubstring(s) -> int:
     # sliding window for substring
     for right in range(len(s)):
 
-        if s[right] in char_freq:
-            char_freq[s[right]] += 1
-        else:
-            char_freq[s[right]] = 1
+        char_freq[s[right]] = char_freq.get(s[right], 0) + 1
 
         # shrink from left if more than 2 distinct characters
         while len(char_freq) > 2:
