@@ -1,13 +1,7 @@
+from collections import Counter
 def canConstruct(ransomNote: str, magazine: str) -> bool:
-    letters = {}
-
-    # count letters from magazine
-    for c in magazine:
-        if c not in letters:
-            letters[c] = 1
-        else:
-            letters[c] += 1
-
+    letters = Counter(magazine) # count letters from magazine
+    
     # check if magazine has needed letters
     for c in ransomNote:
         if c not in letters:
