@@ -10,21 +10,22 @@ class TreeNode:
 def lowestCommonAncestor(root, p, q):
 
     # DFS
-    if not root:
-        return None
+    while root:
 
-    # node is larger than both p & q -> go left
-    if p.val < root.val and q.val < root.val:
-        return lowestCommonAncestor(root.left, p, q)
-   
-    # node is smaller than both p & q -> go right
-    if p.val > root.val and q.val > root.val:
-        return lowestCommonAncestor(root.right, p, q)
+        # node is larger than both p & q -> go left
+        if p.val < root.val and q.val < root.val:
+            root = root.left
+        
+        # node is smaller than both p & q -> go right
+        elif p.val > root.val and q.val > root.val:
+            root = root.right
 
-    return root
+        # guranteed p & q -> gurantees LCA
+        else:
+            return root
 
     # Time:  O(n) -> best case: log(n)
-    # Space: O(h) -> h = height of tree, worst case: n
+    # Space: O(1) -> recursive: h
 
 node3 = TreeNode(3)
 node5 = TreeNode(5)
