@@ -9,29 +9,27 @@ class TreeNode:
 
 def rightSideView(root):
 
-    # base case
-    if not root:
-        return []
-    
-    q = deque([root])
     right_side = [] # result
 
-    # BFS
-    while q:
+    # helper (DFS)
+    def dfs(root, depth):
+        # base case
+        if not root:
+            return
+        
+        # first node seen at depth is on right side
+        if depth == len(right_side):
+            right_side.append(root.val)
 
-        for _ in range(len(q)):
-            node = q.popleft()
+        dfs(root.right, depth + 1)
+        dfs(root.left, depth + 1)
+        return 
 
-            if node.left: q.append(node.left)
-            if node.right: q.append(node.right)
-
-        # last node added to queue will be on right side
-        right_side.append(node.val) 
-
+    dfs(root, 0)
     return right_side
 
     # Time:  O(n)
-    # Space: O(n) -> if balanced tree, queue hold ~n/2 nodes
+    # Space: O(h) -> h = height of tree, worst case: n
 
 node2 = TreeNode(2, right=TreeNode(5))
 node3 = TreeNode(3, right=TreeNode(4))
