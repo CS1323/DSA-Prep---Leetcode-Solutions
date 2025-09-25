@@ -1,32 +1,32 @@
-from collections import defaultdict
+from collections import defaultdict, deque
 
 def validPath(n, edges, source, destination) -> bool:
 
-    adj_list = defaultdict(list)
-    seen = set()
-
     # create adjacency list (undirected)
+    adj_list = defaultdict(list)
     for u,v in edges:
         adj_list[u].append(v)
         adj_list[v].append(u)
 
-    # helper (DFS)
-    def dfs(node):
+    # BFS
+    seen = set()
+    q = deque([source])
+
+    while q:
+        node = q.popleft()
 
         # found path
-        if node == destination:
+        if node == destination: 
             return True
         
         seen.add(node)
-        
+
         # continue search w/unseen nodes
-        for nei in adj_list[node]:
-            if nei not in seen and dfs(nei):
-                return True
+        for nei in adj_list[node]: 
+            if nei not in seen:
+                q.append(nei)
 
-        return False
-
-    return dfs(source)
+    return False
 
     # Time:  O(v+e) -> v=vertices, e=edges
     # Space: O(v+e)
