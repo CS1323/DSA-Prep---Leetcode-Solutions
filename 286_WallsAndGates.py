@@ -1,23 +1,29 @@
+from collections import deque
+
 def wallsAndGates(rooms):
     ROWS, COLS = len(rooms), len(rooms[0])
 
-    def update_dist(r, c, dist):
-        if (r < 0 or r >= ROWS or
-            c < 0 or c >= COLS or
-            rooms[r][c] < dist):
-            return
-         
-        rooms[r][c] = dist
-        update_dist(r, c+1, dist+1) # right
-        update_dist(r, c-1, dist+1) # left
-        update_dist(r+1, c, dist+1) # down
-        update_dist(r-1, c, dist+1) # up
+    q = deque()
 
-    # update distances starting from each gate (DFS)
+    # update distances starting from each gate (BFS)
     for r in range(ROWS):
         for c in range(COLS):
             if not rooms[r][c]:
-                update_dist(r, c, 0)
+                q.append((r,c))
+
+    while q:
+
+        r, c = q.popleft()
+
+        for dr,dc in [(0,1), (0,-1), (1,0), (-1,0)]:
+            row, col = (r + dr), (c + dc)
+
+            # update dist from prev position if it has NOT been seen
+            if not (row < 0 or row >= ROWS or
+                    col < 0 or col >= COLS or
+                    rooms[row][col] != 2**31-1):
+                q.append((row, col))
+                rooms[row][col] = rooms[r][c] + 1
 
     return
 
