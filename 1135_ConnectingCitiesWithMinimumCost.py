@@ -1,38 +1,53 @@
-from collections import defaultdict
-import heapq
+# Disjoint Set Union (DSU) / Union-Find
+class DSU:
+    def __init__(self, n):
+        self.parent = list(range(n+1))
+        self.size = [1] * (n+1)
 
+    def find(self, node):
+        if self.parent[node] != node:
+            self.parent[node] = self.find(self.parent[node])
+        return self.parent[node]
+
+    def union(self, u, v):
+        pu = self.find(u)
+        pv = self.find(v)
+
+        # already connected
+        if pu == pv:
+            return False
+        
+        # union by size
+        if self.size[pu] < self.size[pv]:
+            pu, pv = pv, pu
+        self.size[pu] += self.size[pv]
+        self.parent[pv] = pu
+        return True
+
+# Kruskal's algorithm using DSU
 def connectCities(n, connections) -> int:
 
-    # Build adjacency list
-    adj_list = defaultdict(list)
-    for u,v,w in connections:
-        adj_list[u].append((v,w))
-        adj_list[v].append((u,w))
+    # sort all edges by cost (smallest first)
+    connections.sort(key=lambda x: x[2])
 
+    dsu = DSU(n)    
     total_dist = 0
-    visited = set()
-    min_heap = [(0,1)]  # (cost, city)
 
-    # Prim's algorithm (using min_heap)
-    while min_heap:
+    # connect cities and add cost
+    for u, v, dist in connections:
+        if dsu.union(u, v):
+            total_dist += dist
+            n -= 1  # num of separate components
+    
+    # return total cost if all cities are connected
+    return total_dist if n == 1 else -1
 
-        cost, curr_city = heapq.heappop(min_heap)
-
-        if curr_city in visited: continue
-
-        visited.add(curr_city)
-        total_dist += cost
-
-        # push all edges to unvisited neighbors
-        for nei, edge_cost in adj_list[curr_city]:
-            if nei not in visited:
-                heapq.heappush(min_heap, (edge_cost, nei))
-                
-    # check if all cities are connected
-    return total_dist if len(visited) == n else -1
-
-    # Time:  O(e * log v)
+    # Time:  O(e log e)
+    #   - Sorting edges: O(e log e)
+    #   - Union-Find operations: O(e * α(n)) ≈ O(e)
     # Space: O(v+e)
+    #   - DSU arrays: O(n)
+    #   - Sorted edges: O(e)
 
 n = 3
 connections = [
