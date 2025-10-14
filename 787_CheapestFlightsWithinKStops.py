@@ -1,40 +1,27 @@
-from collections import defaultdict
-import heapq
-
 def findCheapestPrice(n, flights, src, dst, k) -> int:
 
-    # Build adjacency list
-    adj_list = defaultdict(list)
-    for u,v,w in flights:
-        adj_list[u].append((v,w))
+    # Bellman-Ford algorithm
+    cost = [float("inf")] * n
+    cost[src] = 0
 
-    min_heap = [(0, src, 0)]    # (cost, city, stops)
-    best = {(src, 0): 0}        # (city, stops) -> cost
+    # Relax all edges up to k+1 times
+    for _ in range(k+1):
+        temp_cost = cost.copy() # Use previous iteration's costs
 
-    # Dijkstra's algorithm with stop constraint
-    while min_heap:
+        for u, v, w in flights: # u = from_city, v = to_city, w = flight_price 
+            
+            if cost[u] == float("inf"): continue    # skip unreachable nodes
 
-        cost, city, stops = heapq.heappop(min_heap)
+            if cost[u] + w < temp_cost[v]:
+                temp_cost[v] = cost[u] + w  # relax edge
 
-        # early exit when destination reached
-        if city == dst: return cost
+        cost = temp_cost    # Use previous iteration's costs
 
-        # stop limit
-        if stops > k: continue
+    # Return min cost if reachable
+    return cost[dst] if cost[dst] != float("inf") else -1
 
-        # explore neighbors 
-        for nei, price in adj_list[city]:
-            new_cost = cost + price
-
-            # found lower price/cheaper path to neighbor
-            if ( (nei, stops+1) not in best) or (new_cost < best[(nei, stops+1)]):
-                best[(nei, stops+1)] = new_cost
-                heapq.heappush(min_heap, (new_cost, nei, stops+1))
-
-    return -1
-
-    # Time:  O(e * log v)
-    # Space: O(v*k + e)
+    # Time:  O(k * e)   -> up to k+1 rounds, we relax all edges once per round
+    # Space: O(v)       -> cost to reach each node
 
 n = 4
 flights = [[0,1,100],[1,2,100],[2,0,100],[1,3,600],[2,3,200]]
