@@ -7,16 +7,16 @@ def climbStairs(n: int) -> int:
         return n
 
     # Bottom-Up DP
-    dp = [0] * (n+1)    # store results
-    dp[1], dp[2] = 1, 2
+    prev1, prev2 = 1, 2 # ways to reach (n-2) and (n-1)
 
-    for i in range(3, n+1): 
-        dp[i] = dp[i-1] + dp[i-2]
+    for _ in range(3, n+1): 
+        curr = prev1 + prev2
+        prev1, prev2 = prev2, curr
 
-    return dp[n]
+    return curr
 
     # Time:  O(n)
-    # Space: O(n)
+    # Space: O(1)
 
 n = 4
 print(climbStairs(n))
