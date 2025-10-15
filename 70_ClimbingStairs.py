@@ -1,18 +1,19 @@
 def climbStairs(n: int) -> int:
 
-    # Store previously computed results (base cases)
-    memo = {1:1, 2:2}
+    # Base cases:
+    # 1 way to climb 1 step (1)
+    # 2 ways to climb 2 steps (1+1, 2)
+    if n <= 2:
+        return n
 
-    # helper function for Top-Down DP
-    def climb(n):
-        # return cached result if already computed
-        if n in memo:
-            return memo[n]
-        
-        memo[n] = climb(n-1) + climb(n-2)
-        return memo[n]
+    # Bottom-Up DP
+    dp = [0] * (n+1)    # store results
+    dp[1], dp[2] = 1, 2
 
-    return climb(n)
+    for i in range(3, n+1): 
+        dp[i] = dp[i-1] + dp[i-2]
+
+    return dp[n]
 
     # Time:  O(n)
     # Space: O(n)
