@@ -1,32 +1,30 @@
 def longestPalindrome(s: str) -> str:
     n = len(s)
+    dp = [[False] * n for _ in range(n)]    # dp[i][j] is True if s[i...j] is a palindrome
+    start, max_len = 0,1    # track start index and length of longest palindrome
 
-    def get_palindrome(left, right):
-        while left >= 0 and right < n and s[left] == s[right]:
-            left -= 1
-            right += 1
+    # Bottom-Up DP: i goes backwards so dp[i+1][j-1] is already computed
+    for i in range(n-1, -1, -1):
+        for j in range(i, n):
 
-        return left+1, right-1
+            # update table
+            if i == j:      # len(substring) == 1 
+                dp[i][j] = True
+            elif j == i+1:  # len(substring) == 2
+                dp[i][j] = (s[i] == s[j])
+            else:           # len(substring) >= 3
+                dp[i][j] = (s[i] == s[j]) and dp[i+1][j-1]
 
-    start, end = 0,0
-    for i in range(n):
-
-        # odd length palindrome
-        odd_left, odd_right = get_palindrome(i,i)
-
-        if end - start + 1 < odd_right - odd_left + 1:
-            start, end = odd_left, odd_right 
-
-        # even length palindrome
-        even_left, even_right = get_palindrome(i,i+1)
-
-        if end - start + 1 < even_right - even_left + 1:
-            start, end = even_left, even_right
-
-    return s[start:end+1]
+            # update longest palindrome
+            if dp[i][j] and j - i + 1 > max_len:
+                start = i
+                max_len = j - i + 1
+            
+    return s[start:(start + max_len)]
 
     # Time:  O(n**2)
-    # Space: O(1)
+    # Space: O(n**2)
 
 s = "babad"
+# s = "cbbd"
 print(longestPalindrome(s))
