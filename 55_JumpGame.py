@@ -1,30 +1,19 @@
 def canJump(nums) -> bool:
 
     n = len(nums)
-    # memoization: stores whether the end is reachable from index i
-    # base case: last index can obviously reach itself
-    memo = {n-1: True}
+    goal = n-1  # start at last index
 
-    # Top-Down DP helper function
-    def can_reach(i):
+    for i in range(n-1, -1, -1):
 
-        if i in memo:
-            return memo[i]
-        
-        # try all possible jumps from current position
-        for jump in range(1, nums[i] + 1):
-            if can_reach(i + jump):
-                memo[i] = True
-                return True
-            
-        # if none of the jumps work
-        memo[i] = False
-        return False
-        
-    return can_reach(0) # start recursion w/first index
+        # move goal to the left if reachable
+        if i + nums[i] >= goal:
+            goal = i
+    
+    # reached target?
+    return goal == 0 
 
-    # Time:  O(n**2)
-    # Space: O(n)
+    # Time:  O(n)
+    # Space: O(1)
 
 nums = [2,3,1,1,4]
 print(canJump(nums))
