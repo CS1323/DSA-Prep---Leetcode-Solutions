@@ -1,23 +1,25 @@
 def jump(nums) -> int:
 
-    n = len(nums)
-    # dp[i] = min jumps needed to reach the end from index i
-    dp = [float("inf")] * n
-    dp[-1] = 0  # 0 jumps needed at end
+    L = R = 0   # current jump range
+    jumps = 0   # total jumps made
 
-    # Bottom-Up DP
-    for i in range(n-2, -1, -1):
-        # farthest index we can jump to from i within bounds
-        end = min( n, (i + nums[i] + 1) )
+    while R < len(nums)-1:
+        
+        farthest = 0    # farthest reachable index
 
-        # try every reachable index from i and take the min jumps
-        for j in range(i+1, end):
-            dp[i] = min( dp[i], (1 + dp[j]) )
+        for i in range(L, R+1):
+            farthest = max( farthest, (i + nums[i]) )
 
-    return dp[0]    # min jumps needed
+        # update next reachable window
+        L = R+1
+        R = farthest
 
-# Time:  O(n**2)
-# Space: O(n)
+        jumps += 1
+
+    return jumps
+
+    # Time:  O(n)
+    # Space: O(1)
 
 nums = [2,3,1,1,4]
 print(jump(nums))
