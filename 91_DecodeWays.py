@@ -1,28 +1,35 @@
 def numDecodings(s: str) -> int:
 
     n = len(s)
+
+    # invalid if empty or starts with '0'
     if n == 0 or s[0] == '0':
         return 0
     
-    dp = [0] * (n+1)
-    dp[0] = 1   # empty string
-    dp[1] = 1   # valid char
+    prev2 = prev1 = 1   # base cases: dp[0] and dp[1]
 
     # Bottom-Up DP
     for i in range(2, n+1):
 
-        # prev character
+        curr = 0    # ways to decode up to i chars
+
+        # valid single digit
         if s[i-1] != '0':
-            dp[i] += dp[i-1]
+            curr += prev1
 
-        # prev 2 characters
+        # valid two-digit number
         if '10' <= s[i-2:i] <= '26':
-            dp[i] += dp[i-2]
+            curr += prev2
 
-    return dp[n]
+        # shift window
+        prev2 = prev1
+        prev1 = curr
+
+    # total ways
+    return prev1
 
     # Time:  O(n)
-    # Space: O(n)
+    # Space: O(1)
 
 s = "226"
 print(numDecodings(s))
