@@ -1,18 +1,35 @@
 def lengthOfLIS(nums) -> int:
 
     n = len(nums)
-    dp = [1] * n    # dp[i] = length of LIS ending at index i (base case: each element alone -> length 1)
+    tails = [nums[0]]   # base case: element alone -> length 1
 
     # Bottom-Up DP
-    for i in range(n):
-        for j in range(i):
+    for i in range(1, n):
 
-            if nums[j] < nums[i]:
-                dp[i] = max(dp[i], dp[j]+1) # choose the best prev subsequence and add current element
+        # increase subsequence
+        if nums[i] > tails[-1]:
+            tails.append(nums[i])
 
-    return max(dp)
+        # smaller value
+        elif nums[i] < tails[-1]:
 
-    # Time:  O(n**2)
+            left = 0
+            right = len(tails)-1
+
+            # Binary Search to find which tail value to update
+            while left < right:
+                mid = left + ((right - left) // 2)
+
+                if tails[mid] < nums[i]:
+                    left = mid + 1
+                else:
+                    right = mid
+
+            tails[left] = nums[i]
+
+    return len(tails)
+
+    # Time:  O(n log n)
     # Space: O(n)
 
 nums = [10,9,2,5,3,7,101,18]
